@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGO_URL")
+}
+
+model User {
+  id           String    @id @map("_id")
+  name         String?
+  email        String    @unique
+  profileImage String?
+  tier         String?   @default("Free")
+  credits      String?   @default("10")
+  projects     Project[]
+}
+
+model Project {
+  id                   String     @id @default(auto()) @map("_id") @db.ObjectId
+  title                String
+  thumbnail            String
+  thumbnailprompt      String
+  audio                String?
+  duration             Float?
+  script               String?
+  words                String[]
+  start                Float[]
+  end                  Float[]
+  emoji                String
+  sentences            Sentence[]
+  images               Image[]
+  voice_id             String?
+  processing           Boolean @default(true)
+  time_limit           Float
+  has_transition       Boolean
+  has_sound_effects    Boolean
+  remove_silence       Boolean
+  has_animated_footage Boolean
+  aspect_ratio         String
+  user                 User?      @relation(fields: [userId], references: [id])
+  userId               String     
+  createdAt            DateTime
+}
+
+type Audio {
+  url        String
+  asset_id   String
+  created_at DateTime
+  duration   Float
+}
+
+type Sentence {
+  text  String
+  start Float
+  end   Float
+}
+
+type Image {
+    prompt  String
+    url String
+    start Float
+    end  Float
+}
